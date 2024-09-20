@@ -1,0 +1,22 @@
+[package]
+name = "new_project"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+rocket = { version = "0.5.0-rc.2", features = ["json"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tokio = { version = "1", features = ["full"] }
+tokio-postgres = "0.7.11"
+rocket_cors = { version = "0.6.0", default-features = false }
+mongodb = "2.3.1"
+dotenv = "0.15.0"
+thiserror = "1.0.34"
+rocket_okapi = { version = "0.8.0-rc.2", features = ["swagger"] }
+schemars = "0.8.10"
+
+[dev-dependencies]
+clippy = { version = "*", optional = false}
