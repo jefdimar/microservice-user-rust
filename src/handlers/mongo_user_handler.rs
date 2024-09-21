@@ -4,13 +4,13 @@ use mongodb::Database;
 use rocket_okapi::openapi;
 use log::{info, error};
 
-use crate::models::user::User;
+use crate::models::user::UserMongo;
 use crate::services::user_service;
 use crate::errors::app_error::AppError;
 
 #[openapi]
 #[post("/v2/users", data = "<user>")]
-pub async fn adding_user(db: &State<Database>, user: Json<User>) -> Result<Json<User>, AppError> {
+pub async fn adding_user(db: &State<Database>, user: Json<UserMongo>) -> Result<Json<UserMongo>, AppError> {
     info!("Adding new user: {:?}", user);
     match user_service::add_user(db, user.into_inner()).await {
         Ok(added_user) => {
@@ -26,7 +26,7 @@ pub async fn adding_user(db: &State<Database>, user: Json<User>) -> Result<Json<
 
 #[openapi]
 #[get("/v2/users")]
-pub async fn getting_users(db: &State<Database>) -> Result<Json<Vec<User>>, AppError> {
+pub async fn getting_users(db: &State<Database>) -> Result<Json<Vec<UserMongo>>, AppError> {
     info!("Fetching all users");
     match user_service::get_users(db).await {
         Ok(users) => {
@@ -42,7 +42,7 @@ pub async fn getting_users(db: &State<Database>) -> Result<Json<Vec<User>>, AppE
 
 #[openapi]
 #[put("/v2/users/<id>", data = "<user>")]
-pub async fn updating_user(db: &State<Database>, id: String, user: Json<User>) -> Result<Json<User>, AppError> {
+pub async fn updating_user(db: &State<Database>, id: String, user: Json<UserMongo>) -> Result<Json<UserMongo>, AppError> {
     info!("Updating user with id: {}", id);
     match user_service::update_user(db, id, user.into_inner()).await {
         Ok(updated_user) => {
