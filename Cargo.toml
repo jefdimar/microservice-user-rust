@@ -15,7 +15,7 @@ rocket_cors = { version = "0.6.0", default-features = false }
 mongodb = "2.3.1"
 dotenv = "0.15.0"
 thiserror = "1.0.34"
-rocket_okapi = { version = "0.8.0-rc.2", features = ["swagger"] }
+rocket_okapi = { version = "0.8.0-rc2", features = ["swagger"] }
 schemars = "0.8.10"
 
 [dev-dependencies]

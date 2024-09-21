@@ -1,5 +1,5 @@
 use dotenv::dotenv;
-use crate::db::postgres_config::PostgresConfig;
+use crate::db::postgres::PostgresConfig;
 use crate::db::mongo::mongo_connect;
 use mongodb::Database as MongoDatabase;
 use tokio_postgres::Client as PostgresClient;

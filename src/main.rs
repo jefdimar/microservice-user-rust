@@ -13,7 +13,7 @@ mod openapi;
 use rocket_okapi::swagger_ui::make_swagger_ui;
 use routes::user_routes::{user_routes, user_mongo_routes};
 use config::{cors::cors_configuration, app_config::AppConfig};
-use openapi::{openapi_routes, swagger_ui};
+use openapi::swagger_ui::{openapi_routes, swagger_ui};
 use handlers::hello;
 
 #[launch]
