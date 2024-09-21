@@ -1,5 +1,7 @@
 #[macro_use]
 extern crate rocket;
+#[macro_use]
+extern crate log;
 
 mod models;
 mod handlers;
@@ -15,12 +17,26 @@ use routes::user_routes::{user_routes, user_mongo_routes};
 use config::{cors::cors_configuration, app_config::AppConfig};
 use openapi::swagger_ui::{openapi_routes, swagger_ui};
 use handlers::hello;
+use env_logger::Env;
 
 #[launch]
 async fn rocket() -> _ {
-    let app_config = AppConfig::new().await.expect("Failed to initialize application config");
+    // Initialize the logger
+    env_logger::Builder::from_env(Env::default().default_filter_or("info")).init();
 
-    rocket::build()
+    info!("Starting application...");
+
+    let app_config = match AppConfig::new().await {
+        Ok(config) => config,
+        Err(e) => {
+            error!("Failed to initialize application config: {}", e);
+            panic!("Application startup failed");
+        }
+    };
+
+    info!("Application config initialized successfully");
+
+    let rocket_instance = rocket::build()
         .manage(app_config.postgres_client)
         .manage(app_config.mongo_db)
         .mount("/", routes![hello])
@@ -28,5 +44,9 @@ async fn rocket() -> _ {
         .mount("/mongo", user_mongo_routes())
         .mount("/", openapi_routes())
         .mount("/doc", make_swagger_ui(&swagger_ui()))
-        .attach(cors_configuration())
+        .attach(cors_configuration());
+
+    info!("Rocket instance configured, ready to launch!");
+
+    rocket_instance
 }

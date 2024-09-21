@@ -9,6 +9,7 @@ use rocket::serde::json::Json;
 use serde_json::json;
 use schemars::JsonSchema;
 use rocket::response::status::Custom;
+use log::{error, warn};
 
 #[derive(Error, Debug, JsonSchema)]
 pub enum AppError {
@@ -53,12 +54,30 @@ impl OpenApiResponderInner for AppError {
 impl<'r> Responder<'r, 'static> for AppError {
     fn respond_to(self, _: &'r Request<'_>) -> response::Result<'static> {
         let (status, message) = match self {
-            AppError::DatabaseError(msg) => (Status::InternalServerError, msg),
-            AppError::NotFound(msg) => (Status::NotFound, msg),
-            AppError::BadRequest(msg) => (Status::BadRequest, msg),
-            AppError::Unauthorized(msg) => (Status::Unauthorized, msg),
-            AppError::Forbidden(msg) => (Status::Forbidden, msg),
-            AppError::InternalServerError(msg) => (Status::InternalServerError, msg),
+            AppError::DatabaseError(msg) => {
+                error!("Database error: {}", msg);
+                (Status::InternalServerError, msg)
+            },
+            AppError::NotFound(msg) => {
+                warn!("Not found: {}", msg);
+                (Status::NotFound, msg)
+            },
+            AppError::BadRequest(msg) => {
+                warn!("Bad request: {}", msg);
+                (Status::BadRequest, msg)
+            },
+            AppError::Unauthorized(msg) => {
+                warn!("Unauthorized: {}", msg);
+                (Status::Unauthorized, msg)
+            },
+            AppError::Forbidden(msg) => {
+                warn!("Forbidden: {}", msg);
+                (Status::Forbidden, msg)
+            },
+            AppError::InternalServerError(msg) => {
+                error!("Internal server error: {}", msg);
+                (Status::InternalServerError, msg)
+            },
         };
 
         let body = Json(json!({
@@ -76,12 +95,14 @@ impl<'r> Responder<'r, 'static> for AppError {
 
 impl From<MongoError> for AppError {
     fn from(error: MongoError) -> Self {
+        error!("MongoDB error: {}", error);
         AppError::DatabaseError(error.to_string())
     }
 }
 
 impl From<PostgresError> for AppError {
     fn from(error: PostgresError) -> Self {
+        error!("PostgreSQL error: {}", error);
         AppError::DatabaseError(error.to_string())
     }
 }
@@ -89,11 +110,26 @@ impl From<PostgresError> for AppError {
 impl From<Custom<String>> for AppError {
     fn from(custom: Custom<String>) -> Self {
         match custom.1.as_str() {
-            "Not Found" => AppError::NotFound(custom.1),
-            "Bad Request" => AppError::BadRequest(custom.1),
-            "Unauthorized" => AppError::Unauthorized(custom.1),
-            "Forbidden" => AppError::Forbidden(custom.1),
-            _ => AppError::InternalServerError(custom.1),
+            "Not Found" => {
+                warn!("Not Found: {}", custom.1);
+                AppError::NotFound(custom.1)
+            },
+            "Bad Request" => {
+                warn!("Bad Request: {}", custom.1);
+                AppError::BadRequest(custom.1)
+            },
+            "Unauthorized" => {
+                warn!("Unauthorized: {}", custom.1);
+                AppError::Unauthorized(custom.1)
+            },
+            "Forbidden" => {
+                warn!("Forbidden: {}", custom.1);
+                AppError::Forbidden(custom.1)
+            },
+            _ => {
+                error!("Internal Server Error: {}", custom.1);
+                AppError::InternalServerError(custom.1)
+            },
         }
     }
 }
