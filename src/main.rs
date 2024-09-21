@@ -44,7 +44,8 @@ async fn rocket() -> _ {
         .mount("/mongo", user_mongo_routes())
         .mount("/", openapi_routes())
         .mount("/doc", make_swagger_ui(&swagger_ui()))
-        .attach(cors_configuration());
+        .attach(cors_configuration())
+        .configure(rocket::Config::figment().merge(("address", "0.0.0.0")));
 
     info!("Rocket instance configured, ready to launch!");
 

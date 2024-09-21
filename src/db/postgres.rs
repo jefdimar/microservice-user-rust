@@ -62,4 +62,12 @@ impl PostgresConfig {
     }
 }
 
+pub async fn create_postgres_client() -> Result<Client, tokio_postgres::Error> {
+    let config = PostgresConfig {
+        connection_string: std::env::var("DATABASE_URL")
+        .expect("DATABASE_URL must be set"),
+    };
+    config.connect().await
+}
+
 pub type DbClient = State<Client>;
