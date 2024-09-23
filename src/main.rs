@@ -39,13 +39,15 @@ async fn rocket() -> _ {
     let rocket_instance = rocket::build()
         .manage(app_config.postgres_client)
         .manage(app_config.mongo_db)
-        .mount("/", routes![hello])
+        .mount("/health", routes![hello])
         .mount("/postgres", user_routes())
         .mount("/mongo", user_mongo_routes())
         .mount("/", openapi_routes())
         .mount("/doc", make_swagger_ui(&swagger_ui()))
         .attach(cors_configuration())
-        .configure(rocket::Config::figment().merge(("address", "0.0.0.0")));
+        .configure(rocket::Config::figment()
+        .merge(("port", std::env::var("PORT").unwrap_or_else(|_| "8000".to_string()).parse::<u16>().unwrap()))
+        .merge(("address", "0.0.0.0")));
 
     info!("Rocket instance configured, ready to launch!");
 
