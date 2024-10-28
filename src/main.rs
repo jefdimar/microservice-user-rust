@@ -21,35 +21,35 @@ use env_logger::Env;
 
 #[launch]
 async fn rocket() -> _ {
-    // Initialize the logger
-    env_logger::Builder::from_env(Env::default().default_filter_or("info")).init();
+  // Initialize the logger
+  env_logger::Builder::from_env(Env::default().default_filter_or("info")).init();
 
-    info!("Starting application...");
+  info!("Starting application...");
 
-    let app_config = match AppConfig::new().await {
-        Ok(config) => config,
-        Err(e) => {
-            error!("Failed to initialize application config: {}", e);
-            panic!("Application startup failed");
-        }
-    };
+  let app_config = match AppConfig::new().await {
+    Ok(config) => config,
+    Err(e) => {
+      error!("Failed to initialize application config: {}", e);
+      panic!("Application startup failed");
+    }
+  };
 
-    info!("Application config initialized successfully");
+  info!("Application config initialized successfully");
 
-    let rocket_instance = rocket::build()
-        .manage(app_config.postgres_client)
-        .manage(app_config.mongo_db)
-        .mount("/health", routes![hello])
-        .mount("/postgres", user_routes())
-        .mount("/mongo", user_mongo_routes())
-        .mount("/", openapi_routes())
-        .mount("/doc", make_swagger_ui(&swagger_ui()))
-        .attach(cors_configuration())
-        .configure(rocket::Config::figment()
-        .merge(("port", std::env::var("PORT").unwrap_or_else(|_| "8000".to_string()).parse::<u16>().unwrap()))
-        .merge(("address", "0.0.0.0")));
+  let rocket_instance = rocket::build()
+    .manage(app_config.postgres_client)
+    .manage(app_config.mongo_db)
+    .mount("/health", routes![hello])
+    .mount("/postgres", user_routes())
+    .mount("/mongo", user_mongo_routes())
+    .mount("/", openapi_routes())
+    .mount("/doc", make_swagger_ui(&swagger_ui()))
+    .attach(cors_configuration())
+    .configure(rocket::Config::figment()
+    .merge(("port", std::env::var("PORT").unwrap_or_else(|_| "8000".to_string()).parse::<u16>().unwrap()))
+    .merge(("address", "0.0.0.0")));
 
-    info!("Rocket instance configured, ready to launch!");
+  info!("Rocket instance configured, ready to launch!");
 
-    rocket_instance
+  rocket_instance
 }
