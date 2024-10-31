@@ -1,5 +1,5 @@
 [package]
-name = "new_project"
+name = "rust-microservice-user-porto"
 version = "0.1.0"
 edition = "2021"
 

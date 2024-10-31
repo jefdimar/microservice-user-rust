@@ -1184,26 +1184,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "new_project"
-version = "0.1.0"
-dependencies = [
- "clippy",
- "dotenv",
- "env_logger",
- "log",
- "mongodb",
- "rocket",
- "rocket_cors",
- "rocket_okapi",
- "schemars",
- "serde",
- "serde_json",
- "thiserror",
- "tokio",
- "tokio-postgres",
-]
-
-[[package]]
 name = "nu-ansi-term"
 version = "0.46.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1728,6 +1708,26 @@ dependencies = [
  "blake2b_simd",
  "constant_time_eq",
  "crossbeam-utils",
+]
+
+[[package]]
+name = "rust-microservice-user-porto"
+version = "0.1.0"
+dependencies = [
+ "clippy",
+ "dotenv",
+ "env_logger",
+ "log",
+ "mongodb",
+ "rocket",
+ "rocket_cors",
+ "rocket_okapi",
+ "schemars",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "tokio",
+ "tokio-postgres",
 ]
 
 [[package]]
